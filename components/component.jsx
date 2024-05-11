@@ -3,8 +3,9 @@ import { ModeToggle } from "@/components/dark-mode";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import CryptoJS from "crypto-js";
+import { AES, enc } from "crypto-js";
 import { useState } from "react";
-import { encode, decode, loadImage } from "../components/steganography";
+import { encode, decode, loadImage } from "./steganography";
 import { useToast } from "@/components/ui/use-toast";
 
 export function Component() {
@@ -13,26 +14,60 @@ export function Component() {
   const [password, setpassword] = useState("");
   const [image, setimage] = useState();
   const [enc_txt, setenc_txt] = useState("");
-
-  const encryptText = (text, password) => {
-    // Convert the password to a 256-bit key
-    const key = CryptoJS.enc.Utf8.parse(password);
-
-    // Encrypt the text using AES-256 encryption
-    const encrypted = CryptoJS.AES.encrypt(text, key, {
-      mode: CryptoJS.mode.ECB,
-      padding: CryptoJS.pad.Pkcs7,
-      keySize: 256 / 32, // 256 bits key size
-    });
-    // enc_txt = encrypted.toString();
-    // Return the encrypted text as a Base64 string
-    return encrypted.toString();
+  const [isDecrypt, setisDecrypt] = useState(true);
+  const [Enctxt, setEnctxt] = useState('')   
+  const encryptMessage = (message, password) => {
+    const encrypted = AES.encrypt(message, password).toString(); // Encrypt message with AES
+    return encrypted;
   };
 
-  const handleDecrypt = () => {
+  const decryptMessage = (encryptedMessage, password) => {
+    try {
+      const decrypted = AES.decrypt(encryptedMessage, password).toString(
+        enc.Utf8
+      ); // Decrypt message with AES
+      return decrypted;
+    } catch (error) {
+      console.error("Decryption error:", error);
+    }
+  };
+  
+  const handleDecode = () => {
+
     const result = decode();
-    setenc_txt(result);
+    const res=decryptMessage(result, password);
+    setenc_txt(res);
+    toast({
+      title: "Sucessfully Decrypted",
+      description: "The message has been decrypted",
+    });
   };
+  const handelEncode = () => {
+    const res=encryptMessage(message, password)
+    console.log("handle encode fun : encrypted message to be put in image",res)
+    setEnctxt(res);
+    const result = encode(res);
+    {
+      result
+        ? toast({
+            title: result,
+          })
+        : null;
+    }
+  };
+  const handleLoadImage = (e) => {
+    const result = loadImage(e);
+
+    {
+      result
+        ? toast({
+            title: result,
+          })
+        : null;
+    }
+  };
+
+
   return (
     <div className="flex flex-wrap  space-x-5 justify-center items-center h-screen bg-gray-100 dark:bg-gray-800 p-2">
       <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
@@ -55,7 +90,7 @@ export function Component() {
                 </label>
                 <textarea
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
-                  id="secret"
+                  id="secret1"
                   placeholder="Enter text"
                   value={message}
                   onChange={(e) => setmessage(e.target.value)}
@@ -92,44 +127,15 @@ export function Component() {
                   accept="image/*"
                   type="file"
                   value={image}
-                  onChange={loadImage}
+                  onChange={handleLoadImage}
                 />
                 {image}
               </div>
-              <div>
-                {/* <label
-                  className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
-                  htmlFor="result"
-                >
-                  Result
-                </label> 
-                <canvas
-                  alt="Result"
-                  className="w-full bg-gray-200 rounded-md"
-                  height={200}
-                  id="canvas"
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "400/200",
-                    objectFit: "cover",
-                  }}
-                  width={400}
-                /> */}
-              </div>
+              <div></div>
               <div className="flex">
-                <Button className="w-full" onClick={encode}>
-                  {" "}
-                  Encrypt{" "}
+                <Button className="w-full" onClick={handelEncode}>
+                  Encrypt
                 </Button>
-              </div>
-              
-              <div className="p-2 rounded-md  bg-gray-100 dark:bg-gray-800 shadow-md">
-                <img
-                  className="rounded-md"
-                  id="encoded-image"
-                  alt="Encoded Image will be displayed here"
-                ></img>
-               
               </div>
             </div>
           </TabsContent>
@@ -148,7 +154,7 @@ export function Component() {
                   name="upload-photo"
                   accept="image/*"
                   type="file"
-                  onChange={loadImage}
+                  onChange={handleLoadImage}
                 />
               </div>
               <div className="bg-gray-100 p-4 rounded-lg dark:bg-gray-800">
@@ -156,17 +162,26 @@ export function Component() {
                 <p className="font-mono text-sm ">{enc_txt}</p>
               </div>
               <div className="flex">
-                <Button className="w-full" onClick={handleDecrypt}>
+                <Button className="w-full" onClick={handleDecode}>
                   Decrypt
-                  {enc_txt}
                 </Button>
               </div>
             </div>
-            
           </TabsContent>
         </Tabs>
         <canvas className="rounded-md hidden" id="canvas"></canvas>
       </div>
+      {isDecrypt ? (
+        <div className="p-2 rounded-md  bg-gray-100 dark:bg-gray-800 shadow-md">
+          <img
+            className="rounded-md"
+            id="encoded-image"
+            alt="Encoded Image will be displayed here"
+          ></img>
+        </div>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 }

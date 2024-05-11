@@ -1,4 +1,5 @@
 
+
 let isImageUpload = false;
 // Loads input image to the Canvas for encoding or decoding
 function loadImage(e) {
@@ -25,26 +26,30 @@ function loadImage(e) {
 };
 
 // Encodes the secret message on the original and displays the encoded image
-function encode() {
+function encode(message) {
+  // const { toast } = useToast()
+
   if (isImageUpload) {      //Checks if an image is uploaded  
-    let message = document.getElementById('secret').value;
+    // let message = document.getElementById('secret').value;
+    console.log("stenogpy: message ",message);
     if (message.length > 1000) {
-      alert("The message is too big to encode");
+      return ("The message is too big to encode");
     } else {
       document.getElementById('encoded-image').style.display = 'block';
-      document.getElementById('secret').value = '';
+      // document.getElementById('secret').value = '';
       let output = document.getElementById('encoded-image');
       let canvas = document.getElementById('canvas');
       let ctx = canvas.getContext('2d');
       let imgData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
       encodeMessage(imgData.data, message);
       ctx.putImageData(imgData, 0, 0);
-      alert('Image encoded!\n Save below image for further use!');
       output.src = canvas.toDataURL();
+      return ('Image encoded!\n Save below image for further use!');
+
     }
   } else {
     document.getElementById('upload-photo').value = '';
-    alert("Please upload an image!");
+    return ("Please upload an image!");
   }
 };
 
