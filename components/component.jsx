@@ -12,10 +12,11 @@ export function Component() {
   const { toast } = useToast();
   const [message, setmessage] = useState("");
   const [password, setpassword] = useState("");
+  const [password_dec, setpassword_dec] = useState("");
   const [image, setimage] = useState();
   const [enc_txt, setenc_txt] = useState("");
   const [isDecrypt, setisDecrypt] = useState(true);
-  const [Enctxt, setEnctxt] = useState('')   
+  const [Enctxt, setEnctxt] = useState("");
   const encryptMessage = (message, password) => {
     const encrypted = AES.encrypt(message, password).toString(); // Encrypt message with AES
     return encrypted;
@@ -28,14 +29,13 @@ export function Component() {
       ); // Decrypt message with AES
       return decrypted;
     } catch (error) {
-      console.error("Decryption error:", error);
+      toast({ title: "Decryption error:", description: error });
     }
   };
-  
-  const handleDecode = () => {
 
+  const handleDecode = () => {
     const result = decode();
-    const res=decryptMessage(result, password);
+    const res = decryptMessage(result, password_dec);
     setenc_txt(res);
     toast({
       title: "Sucessfully Decrypted",
@@ -43,8 +43,11 @@ export function Component() {
     });
   };
   const handelEncode = () => {
-    const res=encryptMessage(message, password)
-    console.log("handle encode fun : encrypted message to be put in image",res)
+    const res = encryptMessage(message, password);
+    console.log(
+      "handle encode fun : encrypted message to be put in image",
+      res
+    );
     setEnctxt(res);
     const result = encode(res);
     {
@@ -66,7 +69,6 @@ export function Component() {
         : null;
     }
   };
-
 
   return (
     <div className="flex flex-wrap  space-x-5 justify-center items-center h-screen bg-gray-100 dark:bg-gray-800 p-2">
@@ -155,6 +157,22 @@ export function Component() {
                   accept="image/*"
                   type="file"
                   onChange={handleLoadImage}
+                />
+              </div>
+              <div>
+                <label
+                  className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor="password-input"
+                >
+                  Enter password
+                </label>
+                <input
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+                  id="password-input"
+                  placeholder="Enter password"
+                  type="password"
+                  value={password_dec}
+                  onChange={(e) => setpassword_dec(e.target.value)}
                 />
               </div>
               <div className="bg-gray-100 p-4 rounded-lg dark:bg-gray-800">
