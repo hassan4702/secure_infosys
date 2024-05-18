@@ -17,7 +17,7 @@ export function Component() {
   const [password_dec, setpassword_dec] = useState("");
   const [image, setimage] = useState();
   const [enc_txt, setenc_txt] = useState("");
-  const [isDecrypt, setisDecrypt] = useState(true);
+  const [isDecrypt, setisDecrypt] = useState(false);
   const [Enctxt, setEnctxt] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -83,8 +83,22 @@ export function Component() {
         <Tabs className="w-full max-w-md mx-auto" defaultValue="encrypt">
           <div className="flex space-x-4">
             <TabsList className="grid grid-cols-2 w-full">
-              <TabsTrigger value="encrypt">Encrypt</TabsTrigger>
-              <TabsTrigger value="decrypt">Decrypt</TabsTrigger>
+              <TabsTrigger
+                onClick={() => {
+                  setisDecrypt(false);
+                }}
+                value="encrypt"
+              >
+                Encrypt
+              </TabsTrigger>
+              <TabsTrigger
+                onClick={() => {
+                  setisDecrypt(false);
+                }}
+                value="decrypt"
+              >
+                Decrypt
+              </TabsTrigger>
             </TabsList>
             <ModeToggle />
           </div>
@@ -148,7 +162,13 @@ export function Component() {
               </div>
               <div></div>
               <div className="flex">
-                <Button className="w-full" onClick={handelEncode}>
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    setisDecrypt(true);
+                    handelEncode();
+                  }}
+                >
                   Encrypt
                 </Button>
               </div>
@@ -199,7 +219,13 @@ export function Component() {
                 <p className="font-mono text-sm ">{enc_txt}</p>
               </div>
               <div className="flex">
-                <Button className="w-full" onClick={handleDecode}>
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    setisDecrypt(true);
+                    handelEncode();
+                  }}
+                >
                   Decrypt
                 </Button>
               </div>
@@ -208,19 +234,20 @@ export function Component() {
         </Tabs>
         <canvas className="rounded-md hidden" id="canvas"></canvas>
       </div>
-      {isDecrypt ? (
-        <div className="p-2 rounded-md  bg-gray-100 dark:bg-gray-800 shadow-md">
-          {/* <Image
-            className="rounded-md "
-            height={300}
-            width={300}
-            id="encoded-image"
-            alt="Encoded Image will be displayed here"
-          ></Image> */}
-        </div>
-      ) : (
-        <div></div>
-      )}
+
+      <div
+        className={`${
+          isDecrypt ? "flex" : "hidden"
+        } p-2 rounded-md  bg-gray-100 dark:bg-gray-800 shadow-md`}
+      >
+        <img
+          className="rounded-md "
+          height={300}
+          width={300}
+          id="encoded-image"
+          alt="Encoded Image will be displayed here"
+        ></img>
+      </div>
     </div>
   );
 }
