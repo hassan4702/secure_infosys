@@ -222,7 +222,6 @@ export function Component() {
                 <Button
                   className="w-full"
                   onClick={() => {
-                    setisDecrypt(true);
                     handleDecode();
                   }}
                 >
