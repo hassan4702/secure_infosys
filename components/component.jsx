@@ -7,6 +7,8 @@ import { AES, enc } from "crypto-js";
 import { useState } from "react";
 import { encode, decode, loadImage } from "./steganography";
 import { useToast } from "@/components/ui/use-toast";
+import Image from "next/image";
+import { Input } from "./ui/input";
 
 export function Component() {
   const { toast } = useToast();
@@ -17,6 +19,11 @@ export function Component() {
   const [enc_txt, setenc_txt] = useState("");
   const [isDecrypt, setisDecrypt] = useState(true);
   const [Enctxt, setEnctxt] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
   const encryptMessage = (message, password) => {
     const encrypted = AES.encrypt(message, password).toString(); // Encrypt message with AES
     return encrypted;
@@ -99,7 +106,7 @@ export function Component() {
                   type="text"
                 />
               </div>
-              <div>
+              <div className="relative">
                 <label
                   className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                   htmlFor="password-input"
@@ -110,10 +117,16 @@ export function Component() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                   id="password-input"
                   placeholder="Enter password"
-                  type="password"
+                  type={isPasswordVisible ? "text" : "password"}
                   value={password}
                   onChange={(e) => setpassword(e.target.value)}
                 />
+                <button
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-2 top-8"
+                >
+                  {isPasswordVisible ? "🙈" : "👁️"}
+                </button>
               </div>
               <div>
                 <label
@@ -159,7 +172,7 @@ export function Component() {
                   onChange={handleLoadImage}
                 />
               </div>
-              <div>
+              <div className="relative">
                 <label
                   className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                   htmlFor="password-input"
@@ -170,10 +183,16 @@ export function Component() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                   id="password-input"
                   placeholder="Enter password"
-                  type="password"
+                  type={isPasswordVisible ? "text" : "password"}
                   value={password_dec}
                   onChange={(e) => setpassword_dec(e.target.value)}
                 />
+                <button
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-2 top-8"
+                >
+                  {isPasswordVisible ? "🙈" : "👁️"}
+                </button>
               </div>
               <div className="bg-gray-100 p-4 rounded-lg dark:bg-gray-800">
                 Result:
@@ -191,11 +210,13 @@ export function Component() {
       </div>
       {isDecrypt ? (
         <div className="p-2 rounded-md  bg-gray-100 dark:bg-gray-800 shadow-md">
-          <img
-            className="rounded-md"
+          {/* <Image
+            className="rounded-md "
+            height={300}
+            width={300}
             id="encoded-image"
             alt="Encoded Image will be displayed here"
-          ></img>
+          ></Image> */}
         </div>
       ) : (
         <div></div>
