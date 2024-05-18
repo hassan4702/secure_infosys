@@ -85,7 +85,7 @@ export function Component() {
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger
                 onClick={() => {
-                  setisDecrypt(false);
+                  setisDecrypt(!isDecrypt);
                 }}
                 value="encrypt"
               >
@@ -93,7 +93,7 @@ export function Component() {
               </TabsTrigger>
               <TabsTrigger
                 onClick={() => {
-                  setisDecrypt(false);
+                  setisDecrypt(!isDecrypt);
                 }}
                 value="decrypt"
               >
@@ -223,7 +223,7 @@ export function Component() {
                   className="w-full"
                   onClick={() => {
                     setisDecrypt(true);
-                    handelEncode();
+                    handleDecode();
                   }}
                 >
                   Decrypt
